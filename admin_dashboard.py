@@ -282,7 +282,7 @@ def _show_maps(lang):
     map_options = [f"🔴 {t('complaint_heatmap', lang)}", f"💧 {t('water_scarcity_zones', lang)}", f"🏛️ {t('scheme_adoption_heatmap', lang)}"]
     map_type = st.radio(t("select_map_view", lang), map_options, horizontal=True)
 
-    m = folium.Map(location=[20.5937, 78.9629], zoom_start=5, tiles="CartoDB dark_matter")
+    m = folium.Map(location=[20.5937, 78.9629], zoom_start=5, tiles="CartoDB positron")
 
     if map_type == map_options[0] and complaints:
         state_counts = {}

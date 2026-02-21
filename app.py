@@ -1,4 +1,5 @@
-﻿import streamlit as st
+﻿
+import streamlit as st
 from database import init_db
 from translations import get_text
 import auth
