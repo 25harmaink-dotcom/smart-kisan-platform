@@ -1,4 +1,4 @@
-﻿import os
+import os
 from datetime import datetime
 
 import plotly.graph_objects as go
@@ -36,11 +36,11 @@ def show():
             f"""
         <div style='text-align:center; padding:1rem 0;'>
             <div style='font-size:2.5rem;'></div>
-            <div style='font-size:1rem; font-weight:600; color:#e6edf3;'>{farmer['name']}</div>
-            <div style='font-size:0.8rem; color:#8b949e;'>{farmer.get('state','') or t('state_not_set', lang)}  {farmer.get('district','') or t('district_not_set', lang)}</div>
-            <div style='font-size:0.75rem; color:#39d353; margin-top:0.25rem;'> {farmer['phone']}</div>
+            <div style='font-size:1rem; font-weight:600; color:#163a2f;'>{farmer['name']}</div>
+            <div style='font-size:0.8rem; color:#4a7a5a;'>{farmer.get('state','') or t('state_not_set', lang)}  {farmer.get('district','') or t('district_not_set', lang)}</div>
+            <div style='font-size:0.75rem; color:#2e7d32; margin-top:0.25rem;'> {farmer['phone']}</div>
         </div>
-        <hr style='border:1px solid #30363d;'>
+        <hr style='border:1px solid #c8e3cf;'>
         """,
             unsafe_allow_html=True,
         )
@@ -49,8 +49,8 @@ def show():
             st.markdown(
                 f"""
             <div class='kisan-card' style='padding:0.75rem;'>
-                <div style='font-size:0.8rem; color:#8b949e;'>{t('current_profile', lang)}</div>
-                <div style='font-size:0.85rem; color:#e6edf3; margin-top:0.3rem;'>
+                <div style='font-size:0.8rem; color:#4a7a5a;'>{t('current_profile', lang)}</div>
+                <div style='font-size:0.85rem; color:#163a2f; margin-top:0.3rem;'>
                      {farmer.get('crop_type','')}<br>
                      {farmer.get('area_size','') or '-'} acres<br>
                      {localize_term('soil', farmer.get('soil_type','-'), lang)}<br>
@@ -85,8 +85,8 @@ def show():
     st.markdown(
         f"""
     <div style='display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;'>
-        <div style='font-size:1.8rem; font-weight:700; color:#39d353;'> {get_text('dashboard')}</div>
-        <div style='color:#8b949e; font-size:0.9rem;'>{get_text('welcome_farmer')}, {farmer['name']}!</div>
+        <div style='font-size:1.8rem; font-weight:700; color:#2e7d32;'> {get_text('dashboard')}</div>
+        <div style='color:#4a7a5a; font-size:0.9rem;'>{get_text('welcome_farmer')}, {farmer['name']}!</div>
     </div>
     """,
         unsafe_allow_html=True,
@@ -121,7 +121,7 @@ def show():
 
 def _show_tutorial(lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1.5rem;'>{get_text('tutorial_title')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#2e7d32; margin-bottom:1.5rem;'>{get_text('tutorial_title')}</div>",
         unsafe_allow_html=True,
     )
 
@@ -136,12 +136,12 @@ def _show_tutorial(lang):
         st.markdown(
             f"""
         <div class='kisan-card' style='display:flex; gap:1rem; align-items:flex-start;'>
-            <div style='font-size:1.2rem; min-width:48px; text-align:center; color:#39d353; font-weight:700;'>{icon}</div>
+            <div style='font-size:1.2rem; min-width:48px; text-align:center; color:#2e7d32; font-weight:700;'>{icon}</div>
             <div>
-                <div style='font-weight:600; color:#e6edf3; margin-bottom:0.3rem;'>
+                <div style='font-weight:600; color:#163a2f; margin-bottom:0.3rem;'>
                     {title}
                 </div>
-                <div style='color:#8b949e; font-size:0.9rem;'>{desc}</div>
+                <div style='color:#4a7a5a; font-size:0.9rem;'>{desc}</div>
             </div>
         </div>
         """,
@@ -175,7 +175,7 @@ def _show_tutorial(lang):
 
 def _show_profile(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1.5rem;'> {get_text('profile')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#2e7d32; margin-bottom:1.5rem;'> {get_text('profile')}</div>",
         unsafe_allow_html=True,
     )
     with st.form("profile_form"):
@@ -237,7 +237,7 @@ def _show_profile(farmer, lang):
 
 def _show_irrigation(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'> {get_text('irrigation')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#2e7d32; margin-bottom:1rem;'> {get_text('irrigation')}</div>",
         unsafe_allow_html=True,
     )
     if not farmer.get("crop_type"):
@@ -261,7 +261,7 @@ def _show_irrigation(farmer, lang):
 
     plan = st.session_state["irr_plan"]
     st.markdown(
-        f"<div style='font-size:1.1rem; font-weight:600; color:#e6edf3; margin:1rem 0;'> {get_text('irrigation_plan')}  {crop}</div>",
+        f"<div style='font-size:1.1rem; font-weight:600; color:#163a2f; margin:1rem 0;'> {get_text('irrigation_plan')}  {crop}</div>",
         unsafe_allow_html=True,
     )
 
@@ -278,7 +278,7 @@ def _show_irrigation(farmer, lang):
                 f"""
             <div class='metric-card'>
                 <div style='font-size:1.5rem;'>{icon}</div>
-                <div style='font-size:1rem; font-weight:600; color:#39d353;'>{value}</div>
+                <div style='font-size:1rem; font-weight:600; color:#2e7d32;'>{value}</div>
                 <div class='metric-label'>{label}</div>
             </div>
             """,
@@ -293,29 +293,29 @@ def _show_irrigation(farmer, lang):
         st.markdown(f"** {t('irrigation_schedule_next_5', lang)}**")
         for s in plan["schedule"]:
             st.markdown(
-                f"<div style='padding:0.4rem; border-left:3px solid #39d353; margin:0.3rem 0; color:#e6edf3; font-size:0.9rem;'>{s}</div>",
+                f"<div style='padding:0.4rem; border-left:3px solid #2e7d32; margin:0.3rem 0; color:#163a2f; font-size:0.9rem;'>{s}</div>",
                 unsafe_allow_html=True,
             )
     with col2:
         st.markdown(f"** {t('crop_growth_stage_guide', lang)}**")
         for stage in plan["stages"]:
             st.markdown(
-                f"<div style='padding:0.4rem; border-left:3px solid #2ea043; margin:0.3rem 0; color:#8b949e; font-size:0.85rem;'>{stage}</div>",
+                f"<div style='padding:0.4rem; border-left:3px solid #43a047; margin:0.3rem 0; color:#4a7a5a; font-size:0.85rem;'>{stage}</div>",
                 unsafe_allow_html=True,
             )
 
     days = [i * int(plan["freq_days"]) for i in range(1, 8)]
     water_vals = [int(plan["water_per_acre_num"]) * 0.2 for _ in days]
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=[f"Day {d}" for d in days], y=water_vals, marker_color="#39d353", name="Water (L)"))
+    fig.add_trace(go.Bar(x=[f"Day {d}" for d in days], y=water_vals, marker_color="#43a047", name="Water (L)"))
     fig.update_layout(
         title=f"{t('irrigation_schedule_for', lang)} {crop}",
-        plot_bgcolor="#161b22",
-        paper_bgcolor="#1c2128",
-        font_color="#e6edf3",
-        title_font_color="#39d353",
-        xaxis=dict(gridcolor="#30363d"),
-        yaxis=dict(gridcolor="#30363d", title="Water (L)"),
+        plot_bgcolor="#ffffff",
+        paper_bgcolor="#f8fdf9",
+        font_color="#163a2f",
+        title_font_color="#2e7d32",
+        xaxis=dict(gridcolor="#e0ede3"),
+        yaxis=dict(gridcolor="#e0ede3", title="Water (L)"),
         height=300,
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -323,7 +323,7 @@ def _show_irrigation(farmer, lang):
 
 def _show_rotation(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'> {get_text('rotation')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#2e7d32; margin-bottom:1rem;'> {get_text('rotation')}</div>",
         unsafe_allow_html=True,
     )
     if not farmer.get("crop_type"):
@@ -345,18 +345,18 @@ def _show_rotation(farmer, lang):
 
     st.markdown(
         f"""
-    <div class='kisan-card' style='border-color:#39d353;'>
-        <div style='font-size:1.2rem; font-weight:700; color:#39d353; margin-bottom:1rem;'>
+    <div class='kisan-card' style='border-color:#2e7d32;'>
+        <div style='font-size:1.2rem; font-weight:700; color:#2e7d32; margin-bottom:1rem;'>
             {crop}   {r['next_crop']}
         </div>
         <div style='display:grid; grid-template-columns:1fr 1fr; gap:1rem;'>
             <div>
-                <div style='color:#8b949e; font-size:0.85rem;'>{get_text('next_crop')}</div>
-                <div style='color:#e6edf3; font-size:1.1rem; font-weight:600;'> {r['next_crop']}</div>
+                <div style='color:#4a7a5a; font-size:0.85rem;'>{get_text('next_crop')}</div>
+                <div style='color:#163a2f; font-size:1.1rem; font-weight:600;'> {r['next_crop']}</div>
             </div>
             <div>
-                <div style='color:#8b949e; font-size:0.85rem;'>{get_text('soil_impact')}</div>
-                <div style='color:#39d353; font-size:0.9rem;'>{r['soil_impact']}</div>
+                <div style='color:#4a7a5a; font-size:0.85rem;'>{get_text('soil_impact')}</div>
+                <div style='color:#2e7d32; font-size:0.9rem;'>{r['soil_impact']}</div>
             </div>
         </div>
     </div>
@@ -366,8 +366,8 @@ def _show_rotation(farmer, lang):
     st.markdown(
         f"""
     <div class='kisan-card'>
-        <div style='color:#8b949e; font-size:0.85rem;'>{get_text('rotation_reason')}</div>
-        <div style='color:#e6edf3; margin-top:0.5rem;'> {r['reason']}</div>
+        <div style='color:#4a7a5a; font-size:0.85rem;'>{get_text('rotation_reason')}</div>
+        <div style='color:#163a2f; margin-top:0.5rem;'> {r['reason']}</div>
     </div>
     """,
         unsafe_allow_html=True,
@@ -375,8 +375,8 @@ def _show_rotation(farmer, lang):
     st.markdown(
         f"""
     <div class='kisan-card'>
-        <div style='color:#8b949e; font-size:0.85rem;'>{t('soil_specific_tip', lang)}</div>
-        <div style='color:#e6edf3; margin-top:0.5rem;'> {r['soil_tip']}</div>
+        <div style='color:#4a7a5a; font-size:0.85rem;'>{t('soil_specific_tip', lang)}</div>
+        <div style='color:#163a2f; margin-top:0.5rem;'> {r['soil_tip']}</div>
     </div>
     """,
         unsafe_allow_html=True,
@@ -386,7 +386,7 @@ def _show_rotation(farmer, lang):
 
 def _show_schemes(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'> {get_text('schemes')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#2e7d32; margin-bottom:1rem;'> {get_text('schemes')}</div>",
         unsafe_allow_html=True,
     )
 
@@ -421,9 +421,9 @@ def _show_schemes(farmer, lang):
                 st.markdown(
                     f"""
                 <div class='metric-card'>
-                    <div style='font-size:1.2rem; color:#39d353; font-weight:700;'>{s['rating']}</div>
+                    <div style='font-size:1.2rem; color:#2e7d32; font-weight:700;'>{s['rating']}</div>
                     <div style='font-size:0.8rem;'>{stars}</div>
-                    <div style='font-size:0.75rem; color:#8b949e; margin-top:0.5rem;'>{s['adoption_count']:,} {t('adoptions', lang)}</div>
+                    <div style='font-size:0.75rem; color:#4a7a5a; margin-top:0.5rem;'>{s['adoption_count']:,} {t('adoptions', lang)}</div>
                 </div>
                 """,
                     unsafe_allow_html=True,
@@ -435,7 +435,7 @@ def _show_schemes(farmer, lang):
 
 def _show_complaints(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'> {get_text('complaints')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#2e7d32; margin-bottom:1rem;'> {get_text('complaints')}</div>",
         unsafe_allow_html=True,
     )
 
@@ -475,11 +475,11 @@ def _show_complaints(farmer, lang):
                 st.success(f" {get_text('complaint_submitted')}")
                 st.markdown(
                     f"""
-                <div class='kisan-card' style='border-color:#39d353;'>
-                    <div><b>{get_text('complaint_id')}:</b> <span style='color:#39d353; font-family:monospace;'>{cid}</span></div>
+                <div class='kisan-card' style='border-color:#2e7d32;'>
+                    <div><b>{get_text('complaint_id')}:</b> <span style='color:#2e7d32; font-family:monospace;'>{cid}</span></div>
                     <div style='margin-top:0.5rem;'><b>{get_text('priority')}:</b> {priority_badge.get(priority,'')} {localize_priority(priority, lang)}</div>
                     <div><b>{t('routed_to', lang)}:</b> {department}</div>
-                    <div style='color:#8b949e; font-size:0.85rem; margin-top:0.5rem;'>{t('track_complaint_hint', lang)}</div>
+                    <div style='color:#4a7a5a; font-size:0.85rem; margin-top:0.5rem;'>{t('track_complaint_hint', lang)}</div>
                 </div>
                 """,
                     unsafe_allow_html=True,
@@ -492,13 +492,13 @@ def _show_complaints(farmer, lang):
             return
 
         st.markdown(
-            f"<div style='color:#8b949e; margin-bottom:1rem;'>{t('total_complaints_count', lang)}: <b style='color:#39d353;'>{len(complaints)}</b> {t('complaints_label', lang)}</div>",
+            f"<div style='color:#4a7a5a; margin-bottom:1rem;'>{t('total_complaints_count', lang)}: <b style='color:#2e7d32;'>{len(complaints)}</b> {t('complaints_label', lang)}</div>",
             unsafe_allow_html=True,
         )
         for c in complaints:
-            priority_colors = {"High": "#f85149", "Medium": "#d29922", "Low": "#39d353"}
+            priority_colors = {"High": "#f85149", "Medium": "#d29922", "Low": "#43a047"}
             status_icons = {"Submitted": "", "In Progress": "", "Resolved": ""}
-            pcolor = priority_colors.get(c["priority"], "#39d353")
+            pcolor = priority_colors.get(c["priority"], "#2e7d32")
             sicon = status_icons.get(c["status"], "")
 
             st.markdown(
@@ -506,16 +506,16 @@ def _show_complaints(farmer, lang):
             <div class='kisan-card'>
                 <div style='display:flex; justify-content:space-between; align-items:flex-start;'>
                     <div>
-                        <div style='font-weight:600; color:#e6edf3;'>{c['title']}</div>
-                        <div style='font-family:monospace; font-size:0.8rem; color:#39d353;'>{c['complaint_id']}</div>
+                        <div style='font-weight:600; color:#163a2f;'>{c['title']}</div>
+                        <div style='font-family:monospace; font-size:0.8rem; color:#2e7d32;'>{c['complaint_id']}</div>
                     </div>
                     <div style='text-align:right;'>
-                        <span style='background:rgba(0,0,0,0.3); border:1px solid {pcolor}; color:{pcolor}; border-radius:20px; padding:0.2rem 0.6rem; font-size:0.75rem;'>{localize_priority(c['priority'], lang)}</span>
+                        <span style='background:#f8f8f8; border:1px solid {pcolor}; color:{pcolor}; border-radius:20px; padding:0.2rem 0.6rem; font-size:0.75rem;'>{localize_priority(c['priority'], lang)}</span>
                     </div>
                 </div>
-                <div style='color:#8b949e; font-size:0.85rem; margin:0.5rem 0;'>{c['description'][:120]}{'...' if len(c['description']) > 120 else ''}</div>
-                <div style='display:flex; justify-content:space-between; font-size:0.8rem; color:#8b949e;'>
-                    <div>{sicon} {get_text('status')}: <b style='color:#e6edf3;'>{localize_status(c['status'], lang)}</b></div>
+                <div style='color:#4a7a5a; font-size:0.85rem; margin:0.5rem 0;'>{c['description'][:120]}{'...' if len(c['description']) > 120 else ''}</div>
+                <div style='display:flex; justify-content:space-between; font-size:0.8rem; color:#4a7a5a;'>
+                    <div>{sicon} {get_text('status')}: <b style='color:#163a2f;'>{localize_status(c['status'], lang)}</b></div>
                     <div> {c['department']}</div>
                     <div> {c['created_at'][:10]}</div>
                 </div>
