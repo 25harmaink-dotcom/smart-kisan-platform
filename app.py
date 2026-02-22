@@ -269,7 +269,7 @@ if page == 'language_select':
     # LANGUAGE SELECTION PAGE
     st.markdown("""
     <div class="hero-container">
-        <div class="hero-title">Smart Kisan Platform</div>
+        <div class="hero-title">🌿 Smart Kisan Platform</div>
         <div class="hero-subtitle">Empowering Farmers with Smart Technology</div>
         <div class="hero-subtitle" style="font-family: 'Noto Sans Devanagari', sans-serif;">किसानों को स्मार्ट तकनीक से सशक्त बनाना</div>
     </div>

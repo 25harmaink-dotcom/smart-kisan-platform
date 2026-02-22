@@ -6,6 +6,44 @@ No external APIs required.
 
 from i18n_utils import localize_free_text
 
+STAGE_TRANSLATIONS = {
+    "Germination stage: Light irrigation": {
+        "hi": "अंकुरण अवस्था: हल्की सिंचाई",
+        "mr": "अंकुरण टप्पा: हलके सिंचन",
+        "gu": "અંકુરણ ચરણ: હળવી સિંચાઈ",
+        "bn": "অঙ্কুরোদ্গম ধাপ: হালকা সেচ",
+        "ta": "முளை நிலை: இலகு பாசனம்",
+    },
+    "Vegetative stage: Moderate irrigation": {
+        "hi": "वनस्पति अवस्था: मध्यम सिंचाई",
+        "mr": "वनस्पती टप्पा: मध्यम सिंचन",
+        "gu": "વૃદ્ધિ ચરણ: મધ્યમ સિંચાઈ",
+        "bn": "বর্ধন ধাপ: মাঝারি সেচ",
+        "ta": "வளர்ச்சி நிலை: மிதமான பாசனம்",
+    },
+    "Flowering stage: Critical period": {
+        "hi": "फूल अवस्था: महत्वपूर्ण अवधि",
+        "mr": "फुलोरा टप्पा: महत्त्वाचा कालावधी",
+        "gu": "ફૂલાવ ચરણ: મહત્વપૂર્ણ સમય",
+        "bn": "ফুল ধাপ: গুরুত্বপূর্ণ সময়",
+        "ta": "மலர்ச்சி நிலை: முக்கிய காலம்",
+    },
+    "Grain/Fruit fill: Adequate water": {
+        "hi": "दाना/फल भराव: पर्याप्त पानी",
+        "mr": "दाणा/फळ भरणे: पुरेसे पाणी",
+        "gu": "ધાન/ફળ ભરાવ: પૂરતું પાણી",
+        "bn": "দানা/ফল ভরাট: পর্যাপ্ত পানি",
+        "ta": "தானியம்/பழ நிரப்பு: போதுமான நீர்",
+    },
+    "Maturity: Reduce water": {
+        "hi": "परिपक्वता: पानी कम करें",
+        "mr": "परिपक्वता: पाणी कमी करा",
+        "gu": "પરિપક્વતા: પાણી ઓછું કરો",
+        "bn": "পক্বতা: পানি কমান",
+        "ta": "முதிர்ச்சி: நீரை குறைக்கவும்",
+    },
+}
+
 
 # ---- IRRIGATION PLANNER ----
 
@@ -97,7 +135,7 @@ def get_irrigation_plan(crop, soil, water_source, area, lang="en"):
         efficiency_tip = "Borewell usage - monitor groundwater levels. Consider scheduling at night."
 
     schedule = [localize_free_text(f"Day {i * freq}: Apply {int(water_per_acre * 0.2):,} L/acre", lang) for i in range(1, 6)]
-    stages = [localize_free_text(s, lang) for s in _get_crop_stages(crop)]
+    stages = [_localize_stage(s, lang) for s in _get_crop_stages(crop)]
 
     return {
         "water_per_acre": localize_free_text(f"{water_per_acre:,} L/acre", lang),
@@ -154,6 +192,14 @@ def _get_crop_stages(crop):
         ],
     }
     return stages.get(crop, stages["Default"])
+
+
+def _localize_stage(stage, lang):
+    if lang == "en":
+        return stage
+    if stage in STAGE_TRANSLATIONS and lang in STAGE_TRANSLATIONS[stage]:
+        return STAGE_TRANSLATIONS[stage][lang]
+    return localize_free_text(stage, lang)
 
 
 # ---- CROP ROTATION ADVISOR ----

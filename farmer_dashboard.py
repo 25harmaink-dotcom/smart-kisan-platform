@@ -82,16 +82,32 @@ def show():
             st.session_state.page = "login"
             st.rerun()
 
-    st.markdown(
-        f"""
-    <div style='display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;'>
-        <div style='font-size:1.8rem; font-weight:700; color:#39d353;'> {get_text('dashboard')}</div>
-        <div style='color:#8b949e; font-size:0.9rem;'>{get_text('welcome_farmer')}, {farmer['name']}!</div>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    hcol1, hcol2 = st.columns([6, 1])
+    with hcol1:
+        st.markdown(
+            f"""
+        <div style='display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem;'>
+            <div style='font-size:1.8rem; font-weight:700; color:#39d353;'>🌿 {get_text('dashboard')}</div>
+            <div style='color:#8b949e; font-size:0.9rem;'>{get_text('welcome_farmer')}, {farmer['name']}!</div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+    with hcol2:
+        if st.button(f"↩ {get_text('logout')}", key="farmer_logout_top", use_container_width=True):
+            for key in ["logged_in", "user_type", "user_data"]:
+                st.session_state[key] = None
+            st.session_state.logged_in = False
+            st.session_state.page = "login"
+            st.rerun()
 
+    nav_icons = {
+        "tutorial": "🧭",
+        "profile": "👤",
+        "irrigation": "💧",
+        "schemes": "🏛️",
+        "complaints": "📝",
+    }
     nav_items = [
         ("tutorial", _show_tutorial),
         ("profile", lambda x: _show_profile(farmer, x)),
@@ -106,7 +122,7 @@ def show():
 
     nav_cols = st.columns(len(nav_items))
     for idx, (key, _) in enumerate(nav_items):
-        label = get_text(key)
+        label = f"{nav_icons.get(key, '')} {get_text(key)}".strip()
         with nav_cols[idx]:
             if st.button(label, key=f"farmer_nav_{key}", use_container_width=True):
                 st.session_state.farmer_active_tab = key
@@ -121,7 +137,7 @@ def show():
 
 def _show_tutorial(lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1.5rem;'>{get_text('tutorial_title')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1.5rem;'>🧭 {get_text('tutorial_title')}</div>",
         unsafe_allow_html=True,
     )
 
@@ -129,17 +145,17 @@ def _show_tutorial(lang):
         ("1", get_text("tut_step1"), t("tutorial_desc_1", lang)),
         ("2", get_text("tut_step2"), t("tutorial_desc_2", lang)),
         ("3", get_text("tut_step3"), t("tutorial_desc_3", lang)),
-        ("4", get_text("tut_step4"), t("tutorial_desc_4", lang)),
-        ("5", get_text("tut_step5"), t("tutorial_desc_5", lang)),
+        ("4", get_text("tut_step5"), t("tutorial_desc_5", lang)),
     ]
     for i, (icon, title, desc) in enumerate(steps):
+        clean_title = title.split(":", 1)[1].strip() if ":" in title else title
         st.markdown(
             f"""
         <div class='kisan-card' style='display:flex; gap:1rem; align-items:flex-start;'>
             <div style='font-size:1.2rem; min-width:48px; text-align:center; color:#39d353; font-weight:700;'>{icon}</div>
             <div>
                 <div style='font-weight:600; color:#e6edf3; margin-bottom:0.3rem;'>
-                    {title}
+                    {t('tutorial_step_prefix', lang)} {icon}: {clean_title}
                 </div>
                 <div style='color:#8b949e; font-size:0.9rem;'>{desc}</div>
             </div>
@@ -175,7 +191,7 @@ def _show_tutorial(lang):
 
 def _show_profile(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1.5rem;'> {get_text('profile')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1.5rem;'>👤 {get_text('profile')}</div>",
         unsafe_allow_html=True,
     )
     with st.form("profile_form"):
@@ -237,7 +253,7 @@ def _show_profile(farmer, lang):
 
 def _show_irrigation(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'> {get_text('irrigation')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'>💧 {get_text('irrigation')}</div>",
         unsafe_allow_html=True,
     )
     if not farmer.get("crop_type"):
@@ -260,8 +276,9 @@ def _show_irrigation(farmer, lang):
         return
 
     plan = st.session_state["irr_plan"]
+    crop_local = localize_term("crops", crop, lang)
     st.markdown(
-        f"<div style='font-size:1.1rem; font-weight:600; color:#e6edf3; margin:1rem 0;'> {get_text('irrigation_plan')}  {crop}</div>",
+        f"<div style='font-size:1.1rem; font-weight:600; color:#1f5b40; margin:1rem 0;'>{get_text('irrigation_plan')} {crop_local}</div>",
         unsafe_allow_html=True,
     )
 
@@ -307,15 +324,15 @@ def _show_irrigation(farmer, lang):
     days = [i * int(plan["freq_days"]) for i in range(1, 8)]
     water_vals = [int(plan["water_per_acre_num"]) * 0.2 for _ in days]
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=[f"Day {d}" for d in days], y=water_vals, marker_color="#39d353", name="Water (L)"))
+    fig.add_trace(go.Bar(x=[localize_free_text(f"Day {d}", lang) for d in days], y=water_vals, marker_color="#43a047", name=localize_free_text("Water (L)", lang)))
     fig.update_layout(
-        title=f"{t('irrigation_schedule_for', lang)} {crop}",
-        plot_bgcolor="#161b22",
-        paper_bgcolor="#1c2128",
-        font_color="#e6edf3",
-        title_font_color="#39d353",
-        xaxis=dict(gridcolor="#30363d"),
-        yaxis=dict(gridcolor="#30363d", title="Water (L)"),
+        title=f"{t('irrigation_schedule_for', lang)} {crop_local}",
+        plot_bgcolor="#ffffff",
+        paper_bgcolor="#ffffff",
+        font_color="#1f5b40",
+        title_font_color="#2e7d32",
+        xaxis=dict(gridcolor="#d8eadc", title=""),
+        yaxis=dict(gridcolor="#d8eadc", title=localize_free_text("Water (L)", lang)),
         height=300,
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -386,7 +403,7 @@ def _show_rotation(farmer, lang):
 
 def _show_schemes(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'> {get_text('schemes')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'>🏛️ {get_text('schemes')}</div>",
         unsafe_allow_html=True,
     )
 
@@ -400,8 +417,11 @@ def _show_schemes(farmer, lang):
         st.markdown(f"<div class='alert-warning'> {get_text('no_schemes')}</div>", unsafe_allow_html=True)
         return
 
+    state_local = localize_term("states", state, lang)
+    crop_local = localize_term("crops", crop, lang)
+    category_local = localize_term("farmer_category", category_raw, lang)
     st.markdown(
-        f"<div class='alert-success'> {t('schemes_found', lang)} <b>{len(schemes)}</b> {t('schemes_matching_profile', lang)} ({state}  {crop}  {category})</div>",
+        f"<div class='alert-success'> {t('schemes_found', lang)} <b>{len(schemes)}</b> {t('schemes_matching_profile', lang)} ({state_local}  {crop_local}  {category_local})</div>",
         unsafe_allow_html=True,
     )
     for s in schemes:
@@ -435,7 +455,7 @@ def _show_schemes(farmer, lang):
 
 def _show_complaints(farmer, lang):
     st.markdown(
-        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'> {get_text('complaints')}</div>",
+        f"<div style='font-size:1.4rem; font-weight:600; color:#39d353; margin-bottom:1rem;'>📝 {get_text('complaints')}</div>",
         unsafe_allow_html=True,
     )
 
