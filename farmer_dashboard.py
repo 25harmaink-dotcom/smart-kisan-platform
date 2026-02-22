@@ -75,32 +75,15 @@ def show():
             st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button(f" {get_text('logout')}", use_container_width=True):
-            for key in ["logged_in", "user_type", "user_data"]:
-                st.session_state[key] = None
-            st.session_state.logged_in = False
-            st.session_state.page = "login"
-            st.rerun()
-
-    hcol1, hcol2 = st.columns([6, 1])
-    with hcol1:
-        st.markdown(
-            f"""
-        <div style='display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem;'>
-            <div style='font-size:1.8rem; font-weight:700; color:#39d353;'>🌿 {get_text('dashboard')}</div>
-            <div style='color:#8b949e; font-size:0.9rem;'>{get_text('welcome_farmer')}, {farmer['name']}!</div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
-    with hcol2:
-        if st.button(f"↩ {get_text('logout')}", key="farmer_logout_top", use_container_width=True):
-            for key in ["logged_in", "user_type", "user_data"]:
-                st.session_state[key] = None
-            st.session_state.logged_in = False
-            st.session_state.page = "login"
-            st.rerun()
-
+    st.markdown(
+        f"""
+    <div style='display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem;'>
+        <div style='font-size:1.8rem; font-weight:700; color:#39d353;'>???? {get_text('dashboard')}</div>
+        <div style='color:#8b949e; font-size:0.9rem;'>{get_text('welcome_farmer')}, {farmer['name']}!</div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
     nav_icons = {
         "tutorial": "🧭",
         "profile": "👤",

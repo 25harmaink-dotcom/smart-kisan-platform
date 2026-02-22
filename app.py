@@ -77,12 +77,39 @@ div[class^="css"] {
 /* ════════════════════════════════════════════════════════
    FORCE ALL TEXT TO DARK GREEN (never white-on-white)
 ════════════════════════════════════════════════════════ */
-*, *::before, *::after,
+*,
 p, span, label, div, h1, h2, h3, h4, h5, h6,
 li, a, small, td, th, pre, code,
 input, textarea, select, option, button {
     color: var(--text) !important;
     font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif !important;
+}
+
+/* Keep Streamlit icon ligatures from rendering as raw text (arrow_right). */
+.material-symbols-rounded,
+.material-icons,
+.material-icons-round,
+[data-testid="stExpanderToggleIcon"],
+[data-testid="stExpanderToggleIcon"] * {
+    font-family: "Material Symbols Rounded", "Material Icons", sans-serif !important;
+    font-weight: normal !important;
+    font-style: normal !important;
+    line-height: 1 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+    font-feature-settings: "liga" 1 !important;
+    -webkit-font-feature-settings: "liga" 1 !important;
+}
+
+/* Hard fallback: hide expander toggle icon node to prevent raw arrow text rendering. */
+[data-testid="stExpander"] [data-testid="stExpanderToggleIcon"] {
+    display: none !important;
+}
+[data-testid="stExpander"] summary .material-symbols-rounded,
+[data-testid="stExpander"] summary .material-icons,
+[data-testid="stExpander"] summary .material-icons-round {
+    display: none !important;
 }
 
 /* ════════════════════════════════════════════════════════
@@ -294,6 +321,28 @@ div[data-baseweb="notification"] {
 #topbar-login-pill:hover { box-shadow: 0 5px 18px rgba(46,125,50,0.42); transform: translateY(-1px); }
 #topbar-login-pill span  { font-size: 0.92rem; font-weight: 700; color: #ffffff !important; }
 
+.st-key-global_logout_btn {
+    position: fixed;
+    top: 1rem;
+    right: 1.2rem;
+    z-index: 100000;
+}
+.st-key-global_logout_btn button {
+    background: linear-gradient(135deg, #9be15d, #43a047) !important;
+    border: 1px solid #2e7d32 !important;
+    border-radius: 22px !important;
+    padding: 0.45rem 1rem !important;
+    box-shadow: 0 4px 14px rgba(46, 125, 50, 0.28) !important;
+    color: #103524 !important;
+    font-weight: 700 !important;
+    min-height: auto !important;
+    width: auto !important;
+}
+.st-key-global_logout_btn button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(46, 125, 50, 0.36) !important;
+}
+
 /* ════════════════════════════════════════════════════════
    SCROLLBAR / MISC
 ════════════════════════════════════════════════════════ */
@@ -307,11 +356,8 @@ header    { visibility: hidden; }
 .main .block-container { padding-top: 1.5rem; padding-bottom: 2.25rem; max-width: 1200px; }
 
 /* ════════════════════════════════════════════════════════
-   HIDE TOPBAR TRIGGER BUTTONS (TOPBAR_LOGOUT / TOPBAR_LOGIN)
-   These are functional Streamlit buttons hidden visually;
-   the visible pill above triggers them via JS onclick.
+   HIDE TOPBAR LOGIN TRIGGER BUTTON
 ════════════════════════════════════════════════════════ */
-/* Hide the button block that contains TOPBAR_LOGOUT or TOPBAR_LOGIN */
 .stButton:has(button p):not(:has(button p:empty)) button p {
     /* visible by default */
 }
@@ -334,27 +380,22 @@ def show_topbar():
         <span class="flag-text">India</span>
     </div>""", unsafe_allow_html=True)
 
-    action_key = f"topbar_btn_{page}"
-
     if show_logout_btn:
-        st.markdown("""
-        <div id="topbar-login-pill" onclick="
-            Array.from(window.parent.document.querySelectorAll('button')).find(
-                b => b.innerText.trim() === 'TOPBAR_LOGOUT')?.click();">
-            <span>🚪 Logout</span>
-        </div>""", unsafe_allow_html=True)
-        if st.button("TOPBAR_LOGOUT", key=action_key):
-            from database import log_admin_action as _log
+        if st.button("🌿 Logout", key="global_logout_btn"):
             if st.session_state.get("user_type") == "admin":
-                try: _log(st.session_state.user_data["username"], "LOGOUT", "Logged out via topbar")
-                except: pass
-            for k in ["logged_in","user_type","user_data"]:
+                try:
+                    from database import log_admin_action as _log
+                    _log(st.session_state.user_data["username"], "LOGOUT", "Logged out via topbar")
+                except Exception:
+                    pass
+            for k in ["logged_in", "user_type", "user_data"]:
                 st.session_state[k] = None
             st.session_state.logged_in = False
             st.session_state.page = "language_select"
             st.rerun()
 
     elif show_login_btn:
+        action_key = f"topbar_btn_{page}"
         st.markdown("""
         <div id="topbar-login-pill" onclick="
             Array.from(window.parent.document.querySelectorAll('button')).find(
@@ -383,7 +424,7 @@ init_session()
 page = st.session_state.page
 show_topbar()
 
-# Inject JS to hide the TOPBAR_LOGOUT/TOPBAR_LOGIN trigger buttons after render
+# Inject JS to hide the TOPBAR_LOGIN trigger button after render
 st.markdown("""<script>
 (function(){
   function hideBtn(){
@@ -391,7 +432,7 @@ st.markdown("""<script>
       var btns=window.parent.document.querySelectorAll('button');
       btns.forEach(function(b){
         var t=b.innerText.trim();
-        if(t==='TOPBAR_LOGOUT'||t==='TOPBAR_LOGIN'){
+        if(t==='TOPBAR_LOGIN'){
           // Hide the button itself
           b.style.cssText='position:fixed!important;top:-9999px!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important;opacity:0!important;pointer-events:auto!important;';
           // Walk up and hide the stVerticalBlock container
@@ -408,11 +449,29 @@ st.markdown("""<script>
       });
     } catch(e){}
   }
+  function fixExpanderArrowText(){
+    try {
+      var root = window.parent.document;
+      root.querySelectorAll('[data-testid="stExpander"] summary span, [data-testid="stExpander"] summary div').forEach(function(el){
+        var txt = (el.textContent || '').trim();
+        if (txt === 'arrow_right' || txt === 'arrow_drop_down' || txt === '.arrow_right' || txt === '.arrow_drop_down') {
+          el.textContent = '';
+        }
+      });
+    } catch(e){}
+  }
   hideBtn();
+  fixExpanderArrowText();
   setTimeout(hideBtn,100);
   setTimeout(hideBtn,500);
   setTimeout(hideBtn,1500);
-  var mo=new MutationObserver(hideBtn);
+  setTimeout(fixExpanderArrowText,100);
+  setTimeout(fixExpanderArrowText,500);
+  setTimeout(fixExpanderArrowText,1500);
+  var mo=new MutationObserver(function(){
+    hideBtn();
+    fixExpanderArrowText();
+  });
   mo.observe(window.parent.document.body,{childList:true,subtree:true});
 })();
 </script>""", unsafe_allow_html=True)

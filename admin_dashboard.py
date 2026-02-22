@@ -124,14 +124,6 @@ def show():
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.button(f"🚪 {get_text('logout')}", use_container_width=True):
-            log_admin_action(admin["username"], "LOGOUT", "Admin logged out via sidebar")
-            for k in ["logged_in", "user_type", "user_data"]:
-                st.session_state[k] = None
-            st.session_state.logged_in = False
-            st.session_state.page = "language_select"
-            st.rerun()
-
     # ── Page header ───────────────────────────────────────────────────────────
     st.markdown(
         f"""
@@ -425,10 +417,10 @@ def _show_complaints_mgmt(admin, lang):
 # ── Schemes Management ─────────────────────────────────────────────────────────
 
 def _show_schemes_mgmt(admin, lang):
-    _title(f"🏛️ {t('scheme_management', lang)}")
+    _title(t("scheme_management", lang))
     tab1, tab2 = st.tabs([
-        f"📋 {t('view_manage', lang)}",
-        f"➕ {t('add_new_scheme_tab', lang)}",
+        t("view_manage", lang),
+        t("add_new_scheme_tab", lang),
     ])
 
     with tab1:
@@ -438,76 +430,97 @@ def _show_schemes_mgmt(admin, lang):
             display_benefits = localize_scheme_text(s["benefits"], lang)
             display_dept = localize_department(s["department"], lang)
 
-            with st.expander(f"🏛️ {display_name} — {s['adoption_count']:,} {t('adoptions', lang)} | ★ {s['rating']}"):
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.markdown(f"**{get_text('description')}:** {display_desc}")
-                    st.markdown(f"**{get_text('benefits')}:** {display_benefits}")
-                    st.markdown(f"**{get_text('department')}:** {display_dept}")
-                    st.markdown(f"**{t('eligible_states_label', lang)}:** {s['eligible_states']} | **{t('eligible_crops_label', lang)}:** {s['eligible_crops']} | **{get_text('farmer_category')}:** {s['eligible_categories']}")
+            title = f"{display_name} - {s['adoption_count']:,} {t('adoptions', lang)} | Rating {s['rating']}"
+            st.markdown(
+                f"<div style='background:{CARD}; border:1px solid {B}; border-radius:12px; padding:0.7rem 1rem; margin:0.6rem 0; font-weight:600; color:{DG};'>{title}</div>",
+                unsafe_allow_html=True,
+            )
 
-                with col2:
-                    if st.button(f"🗑️ {get_text('delete_scheme')}", key=f"del_{s['id']}", use_container_width=True):
-                        delete_scheme(s["id"])
-                        log_admin_action(admin["username"], "DELETE_SCHEME", s["name"])
-                        st.success(t("deleted", lang))
-                        st.rerun()
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.markdown(f"**{get_text('description')}:** {display_desc}")
+                st.markdown(f"**{get_text('benefits')}:** {display_benefits}")
+                st.markdown(f"**{get_text('department')}:** {display_dept}")
+                st.markdown(
+                    f"**{t('eligible_states_label', lang)}:** {s['eligible_states']} | "
+                    f"**{t('eligible_crops_label', lang)}:** {s['eligible_crops']} | "
+                    f"**{get_text('farmer_category')}:** {s['eligible_categories']}"
+                )
 
-                with st.form(f"edit_{s['id']}"):
-                    st.markdown(
-                        f"<div style='font-size:0.9rem;font-weight:600;color:{G};"
-                        f"margin-bottom:0.7rem;'>✏️ Edit Scheme</div>",
-                        unsafe_allow_html=True,
+            with col2:
+                if st.button(get_text("delete_scheme"), key=f"del_{s['id']}", use_container_width=True):
+                    delete_scheme(s["id"])
+                    log_admin_action(admin["username"], "DELETE_SCHEME", s["name"])
+                    st.success(t("deleted", lang))
+                    st.rerun()
+
+            with st.form(f"edit_{s['id']}"):
+                st.markdown(
+                    f"<div style='font-size:0.9rem;font-weight:600;color:{G};margin-bottom:0.7rem;'>Edit Scheme</div>",
+                    unsafe_allow_html=True,
+                )
+                ec1, ec2 = st.columns(2)
+                with ec1:
+                    en = st.text_input(t("name_label", lang), value=s["name"])
+                    ed = st.text_area(get_text("description"), value=s["description"], height=80)
+                    eb = st.text_area(t("benefits_label", lang), value=s["benefits"], height=80)
+                with ec2:
+                    est = st.text_input(t("eligible_states_label", lang), value=s["eligible_states"])
+                    ec = st.text_input(t("eligible_crops_label", lang), value=s["eligible_crops"])
+                    eca = st.text_input(get_text("eligible_categories"), value=s["eligible_categories"])
+                    edp = st.text_input(get_text("department"), value=s["department"])
+                if st.form_submit_button(t("save_changes", lang), use_container_width=True):
+                    update_scheme(
+                        s["id"],
+                        {
+                            "name": en,
+                            "description": ed,
+                            "benefits": eb,
+                            "eligible_states": est,
+                            "eligible_crops": ec,
+                            "eligible_categories": eca,
+                            "department": edp,
+                        },
                     )
-                    ec1, ec2 = st.columns(2)
-                    with ec1:
-                        en  = st.text_input(t("name_label", lang), value=s["name"])
-                        ed  = st.text_area(get_text("description"), value=s["description"], height=80)
-                        eb  = st.text_area(t("benefits_label", lang), value=s["benefits"], height=80)
-                    with ec2:
-                        est = st.text_input(t("eligible_states_label", lang), value=s["eligible_states"])
-                        ec  = st.text_input(t("eligible_crops_label", lang), value=s["eligible_crops"])
-                        eca = st.text_input(get_text("eligible_categories"), value=s["eligible_categories"])
-                        edp = st.text_input(get_text("department"), value=s["department"])
-                    if st.form_submit_button(f"💾 {t('save_changes', lang)}", use_container_width=True):
-                        update_scheme(s["id"], {
-                            "name": en, "description": ed, "benefits": eb,
-                            "eligible_states": est, "eligible_crops": ec,
-                            "eligible_categories": eca, "department": edp,
-                        })
-                        log_admin_action(admin["username"], "EDIT_SCHEME", en)
-                        st.success(f"✅ {t('scheme_updated', lang)}")
-                        st.rerun()
+                    log_admin_action(admin["username"], "EDIT_SCHEME", en)
+                    st.success(t("scheme_updated", lang))
+                    st.rerun()
 
     with tab2:
         st.markdown(
             f"<div style='background:{BG2};border:1px solid {B};border-radius:12px;"
             f"padding:1rem 1.2rem;margin-bottom:1rem;font-size:0.9rem;color:{M};'>"
-            f"➕ {t('add_new_govt_scheme', lang)}</div>",
+            f"{t('add_new_govt_scheme', lang)}</div>",
             unsafe_allow_html=True,
         )
         with st.form("add_scheme"):
             ac1, ac2 = st.columns(2)
             with ac1:
-                name = st.text_input(f"📌 {get_text('scheme_name')}")
-                desc = st.text_area(f"📝 {get_text('description')}", height=100)
-                bens = st.text_area(f"💰 {get_text('benefits')}", height=100)
+                name = st.text_input(get_text("scheme_name"))
+                desc = st.text_area(get_text("description"), height=100)
+                bens = st.text_area(get_text("benefits"), height=100)
             with ac2:
-                asts = st.text_input(f"🗺️ {get_text('eligible_states')}", value="All")
-                acr  = st.text_input(f"🌾 {get_text('eligible_crops')}", value="All")
-                acat = st.text_input(f"👥 {get_text('eligible_categories')}", value="All")
-                adpt = st.selectbox(f"🏢 {get_text('department')}", DEPARTMENTS)
-            if st.form_submit_button(f"✅ {get_text('save_scheme')}", use_container_width=True):
+                asts = st.text_input(get_text("eligible_states"), value="All")
+                acr = st.text_input(get_text("eligible_crops"), value="All")
+                acat = st.text_input(get_text("eligible_categories"), value="All")
+                adpt = st.selectbox(get_text("department"), DEPARTMENTS)
+            if st.form_submit_button(get_text("save_scheme"), use_container_width=True):
                 if not (name and desc and bens):
                     st.warning(t("fill_required_fields", lang))
                 else:
-                    add_scheme({
-                        "name": name, "description": desc, "benefits": bens,
-                        "eligible_states": asts, "eligible_crops": acr,
-                        "eligible_categories": acat, "department": adpt,
-                    })
+                    add_scheme(
+                        {
+                            "name": name,
+                            "description": desc,
+                            "benefits": bens,
+                            "eligible_states": asts,
+                            "eligible_crops": acr,
+                            "eligible_categories": acat,
+                            "department": adpt,
+                        }
+                    )
                     log_admin_action(admin["username"], "ADD_SCHEME", name)
-                    st.success(f"✅ {name} - {t('scheme_added_success', lang)}")
+                    st.success(f"{name} - {t('scheme_added_success', lang)}")
                     st.rerun()
 
 def _show_maps(lang):
