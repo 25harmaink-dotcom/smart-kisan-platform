@@ -58,7 +58,7 @@ def show():
         st.markdown(
             f"""
         <div style='text-align:center; padding:1rem 0;'>
-            <div style='font-size:2.5rem;'>ðŸ”§</div>
+            <div style='font-size:2.5rem;'>🔧</div>
             <div style='font-size:1rem; font-weight:600; color:#e6edf3;'>{t('admin_panel', lang)}</div>
             <div style='font-size:0.8rem; color:#39d353;'>Smart Kisan Platform</div>
         </div>
@@ -73,7 +73,7 @@ def show():
             st.session_state.language = new_lang
             st.rerun()
 
-        if st.button(f"ðŸšª {get_text('logout')}", use_container_width=True):
+        if st.button(f"🚪 {get_text('logout')}", use_container_width=True):
             log_admin_action(admin["username"], "LOGOUT", "Admin logged out")
             for key in ["logged_in", "user_type", "user_data"]:
                 st.session_state[key] = None
@@ -82,11 +82,11 @@ def show():
             st.rerun()
 
     st.markdown(
-        f"<div style='font-size:1.8rem; font-weight:700; color:#39d353; margin-bottom:1.5rem;'>ðŸ”§ {get_text('admin_dashboard')}</div>",
+        f"<div style='font-size:1.8rem; font-weight:700; color:#39d353; margin-bottom:1.5rem;'>🔧 {get_text('admin_dashboard')}</div>",
         unsafe_allow_html=True,
     )
 
-    tabs = st.tabs([f"ðŸ“Š {get_text('overview')}", f"ðŸ“‹ {get_text('manage_complaints')}", f"ðŸ›ï¸ {get_text('manage_schemes')}", f"ðŸ—ºï¸ {get_text('map_view')}"])
+    tabs = st.tabs([f"📊 {get_text('overview')}", f"📋 {get_text('manage_complaints')}", f"🏛️ {get_text('manage_schemes')}", f"🗺️ {get_text('map_view')}"])
     with tabs[0]:
         _show_overview(lang)
     with tabs[1]:
@@ -99,12 +99,12 @@ def show():
 
 def _show_overview(lang):
     stats = get_stats()
-    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>ðŸ“Š {t('platform_overview', lang)}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>📊 {t('platform_overview', lang)}</div>", unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns(3)
     for col, (icon, label, value, color) in zip(
         [col1, col2, col3],
-        [("ðŸ‘¨â€ðŸŒ¾", get_text("total_farmers"), stats["total_farmers"], "#39d353"), ("ðŸ“‹", get_text("total_complaints"), stats["total_complaints"], "#388bfd"), ("âœ…", get_text("resolved"), stats["resolved_complaints"], "#2ea043")],
+        [("👨‍🌾", get_text("total_farmers"), stats["total_farmers"], "#39d353"), ("📋", get_text("total_complaints"), stats["total_complaints"], "#388bfd"), ("✅", get_text("resolved"), stats["resolved_complaints"], "#2ea043")],
     ):
         with col:
             st.markdown(f"<div class='metric-card'><div style='font-size:1.8rem;'>{icon}</div><div style='font-size:1.8rem; font-weight:700; color:{color};'>{value}</div><div class='metric-label'>{label}</div></div>", unsafe_allow_html=True)
@@ -128,7 +128,7 @@ def _show_overview(lang):
 
 
 def _show_complaints_mgmt(admin, lang):
-    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>ðŸ“‹ {t('complaint_management', lang)}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>📋 {t('complaint_management', lang)}</div>", unsafe_allow_html=True)
     complaints = get_all_complaints()
     if not complaints:
         st.info(t("no_complaints_yet", lang))
@@ -160,11 +160,11 @@ def _show_complaints_mgmt(admin, lang):
     st.markdown(f"<div style='color:#8b949e; margin-bottom:1rem;'>{t('showing_count_complaints', lang)} <b style='color:#39d353;'>{len(filtered)}</b> {t('complaints_label', lang)}</div>", unsafe_allow_html=True)
 
     priority_colors = {"High": "#f85149", "Medium": "#d29922", "Low": "#39d353"}
-    status_icons = {"Submitted": "ðŸ“¨", "In Progress": "âš™ï¸", "Resolved": "âœ…"}
+    status_icons = {"Submitted": "📨", "In Progress": "⚙️", "Resolved": "✅"}
     for c in filtered:
         pcolor = priority_colors.get(c["priority"], "#39d353")
-        sicon = status_icons.get(c["status"], "ðŸ“¨")
-        with st.expander(f"{sicon} [{localize_priority(c['priority'], lang)}] {c['complaint_id']} â€” {c['title'][:50]}"):
+        sicon = status_icons.get(c["status"], "📨")
+        with st.expander(f"{sicon} [{localize_priority(c['priority'], lang)}] {c['complaint_id']} — {c['title'][:50]}"):
             col1, col2 = st.columns([2, 1])
             with col1:
                 st.markdown(f"**{get_text('farmer')}:** {c['farmer_name']} | **{get_text('state')}:** {c['state']} | **{get_text('district')}:** {c['district']}")
@@ -183,10 +183,10 @@ def _show_complaints_mgmt(admin, lang):
                 new_status_db = reverse_status[new_status]
                 new_dept = st.selectbox(t("reassign_dept", lang), DEPARTMENTS, index=DEPARTMENTS.index(c["department"]) if c["department"] in DEPARTMENTS else 0, key=f"dept_{c['complaint_id']}")
 
-                if st.button(f"ðŸ’¾ {get_text('update_status')}", key=f"upd_{c['complaint_id']}", use_container_width=True):
+                if st.button(f"💾 {get_text('update_status')}", key=f"upd_{c['complaint_id']}", use_container_width=True):
                     update_complaint_status(c["complaint_id"], new_status_db, new_dept)
                     log_admin_action(admin["username"], "UPDATE_COMPLAINT", f"Complaint {c['complaint_id']} -> {new_status_db} | Dept: {new_dept}")
-                    st.success(f"âœ… {t('updated_success', lang)}")
+                    st.success(f"✅ {t('updated_success', lang)}")
                     st.rerun()
 
 
@@ -280,11 +280,11 @@ def _show_schemes_mgmt(admin, lang):
                 st.rerun()
 
 def _show_maps(lang):
-    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>ðŸ—ºï¸ {t('map_dashboard', lang)}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>🗺️ {t('map_dashboard', lang)}</div>", unsafe_allow_html=True)
     complaints = get_all_complaints()
     farmers = get_all_farmers()
 
-    map_options = [f"ðŸ”´ {t('complaint_heatmap', lang)}", f"ðŸ’§ {t('water_scarcity_zones', lang)}", f"ðŸ›ï¸ {t('scheme_adoption_heatmap', lang)}"]
+    map_options = [f"🔴 {t('complaint_heatmap', lang)}", f"💧 {t('water_scarcity_zones', lang)}", f"🏛️ {t('scheme_adoption_heatmap', lang)}"]
     map_type = st.radio(t("select_map_view", lang), map_options, horizontal=True)
 
     m = folium.Map(location=[20.5937, 78.9629], zoom_start=5, tiles="CartoDB positron")
@@ -320,7 +320,7 @@ def _show_maps(lang):
                 continue
             folium.CircleMarker(location=coords, radius=20, color=color_map[level], fill=True, fill_opacity=0.6, popup=folium.Popup(f"<b>{state}</b><br>{level}", max_width=200), tooltip=f"{state}: {level}").add_to(m)
         st.markdown(
-            f"<div style='display:flex; gap:1rem; margin-bottom:1rem;'><span style='color:#f85149;'>ðŸ”´ {t('high_scarcity', lang)}</span><span style='color:#d29922;'>ðŸŸ¡ {t('medium_scarcity', lang)}</span><span style='color:#388bfd;'>ðŸ”µ {t('low_scarcity', lang)}</span></div>",
+            f"<div style='display:flex; gap:1rem; margin-bottom:1rem;'><span style='color:#f85149;'>🔴 {t('high_scarcity', lang)}</span><span style='color:#d29922;'>🟡 {t('medium_scarcity', lang)}</span><span style='color:#388bfd;'>🔵 {t('low_scarcity', lang)}</span></div>",
             unsafe_allow_html=True,
         )
 
@@ -339,16 +339,16 @@ def _show_maps(lang):
 
 
 def _show_logs(lang):
-    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>ðŸ§¾ {get_text('activity_log')}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='font-size:1.2rem; font-weight:600; color:#e6edf3; margin-bottom:1rem;'>🧾 {get_text('activity_log')}</div>", unsafe_allow_html=True)
     logs = get_admin_logs()
     if not logs:
         st.info("No activity logged yet.")
         return
     for log in logs:
-        action_icons = {"LOGIN": "ðŸ”", "LOGOUT": "ðŸšª", "UPDATE_COMPLAINT": "ðŸ“‹", "DELETE_SCHEME": "ðŸ—‘ï¸", "EDIT_SCHEME": "âœï¸", "ADD_SCHEME": "âž•"}
-        icon = action_icons.get(log["action"], "ðŸ“Œ")
+        action_icons = {"LOGIN": "🔐", "LOGOUT": "🚪", "UPDATE_COMPLAINT": "📋", "DELETE_SCHEME": "🗑️", "EDIT_SCHEME": "✏️", "ADD_SCHEME": "➕"}
+        icon = action_icons.get(log["action"], "📌")
         st.markdown(
-            f"<div style='display:flex; gap:1rem; align-items:center; padding:0.6rem; border-bottom:1px solid #30363d;'><div style='font-size:1.2rem;'>{icon}</div><div style='flex:1;'><span style='color:#39d353; font-weight:600;'>{log['action']}</span><span style='color:#8b949e; font-size:0.85rem;'> â€” {log['details']}</span></div><div style='color:#8b949e; font-size:0.8rem;'>{log['timestamp'][:16]}</div></div>",
+            f"<div style='display:flex; gap:1rem; align-items:center; padding:0.6rem; border-bottom:1px solid #30363d;'><div style='font-size:1.2rem;'>{icon}</div><div style='flex:1;'><span style='color:#39d353; font-weight:600;'>{log['action']}</span><span style='color:#8b949e; font-size:0.85rem;'> — {log['details']}</span></div><div style='color:#8b949e; font-size:0.8rem;'>{log['timestamp'][:16]}</div></div>",
             unsafe_allow_html=True,
         )
 
